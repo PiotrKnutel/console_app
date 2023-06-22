@@ -6,17 +6,16 @@ const char version_text[] = "version 1.0\n";
 const char help_text[] = 
     "Usage: app [-v] [-h | --help] [--args] \n"
     "           [-p <value> | --param <value>] [--data <value>]\n"
-    "  --args         return the number of arguments and show\n"
-    "                   a list of them\n"
-    "  --data [DMMYY] show date DMMYY as 'day_of_week month year',\n"
+    "Options:\n"
+    "  --args         Return the number of arguments and show a list of them\n"
+    "  --data [DMMYY] Show date DMMYY as 'day_of_week month year',\n"
     "                   e.g. 71223 as Sunday December 2023\n"
-    "  -h, --help     show help\n"
+    "  -h, --help     Show help\n"
     "  -p, --param [VALUE] \n"
-    "                 if VALUE is a number, then put the number to\n"
-    "                   'dane.txt' file; if VALUE is a string,\n"
-    "                   then write it on the screen; if no VALUE,\n"
-    "                   then show last number from 'dane.txt' file\n"
-    "  -v             show version\n";
+    "                 If VALUE is a number, then put the number to 'dane.txt';\n"
+    "                   if VALUE is a string, then write it on the screen;\n"
+    "                   if no VALUE, then show last number from 'dane.txt'\n"
+    "  -v             Show version\n";
 
 int main(int argc, char **argv)
 {
