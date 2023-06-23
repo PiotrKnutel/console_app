@@ -15,7 +15,8 @@ const char help_text[] =
     "  -p, --param [VALUE] \n"
     "                 If VALUE is a number, then put the number to 'dane.txt';\n"
     "                   if VALUE is a string, then write it on the screen;\n"
-    "                   if no VALUE, then show last number from 'dane.txt'\n"
+    "                   if no VALUE, then show last number from 'dane.txt';\n"
+    "                   VALUE accepts rational number (double), also negativ\n"
     "  -v             Show version\n";
 
 char *param_value;
