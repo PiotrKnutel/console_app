@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <getopt.h>
 #include "work_with_param.h"
 
 const char version_text[] = "version 1.0\n";
@@ -33,6 +33,8 @@ int main(int argc, char **argv)
     int version_flag = 0;
     int param_read_from_file_flag = 0;
     int param_flag = 0;
+    static int args_flag = 0;
+    static int data_flag = 0;
     
     param_value = NULL;
 
@@ -42,10 +44,29 @@ int main(int argc, char **argv)
     }
     else
     {
-        while ((c = getopt(argc, argv, ":hvp:")) != -1)
+        while(1)
         {
+            static struct option getopt_long_options[] = {
+            {"args",    required_argument,  &args_flag,      1  },
+            {"data",    required_argument,  &data_flag,      1  },
+            {"help",    no_argument,        NULL,           'h' },
+            {"param",   required_argument,  NULL,           'p' },
+            {0, 0, 0, 0}
+        };
+
+        int option_index = 0;
+        c = getopt_long(argc, argv, ":hvp:", getopt_long_options, &option_index);
+
+        if (c == -1)    // end of options 
+            break;
+
             switch (c)
             {
+                case 0:
+                    // neccessery for --args and --data
+                    if (getopt_long_options[option_index].flag != NULL)
+                        break;
+                    break;
                 case 'h':
                     help_flag = 1;
                     break;
@@ -53,9 +74,19 @@ int main(int argc, char **argv)
                     version_flag = 1;
                     break;
                 case 'p':
-                    param_flag = 1;
-                    param_value = optarg;
+                    if (optarg)
+                    {
+                        param_flag = 1;
+                        param_value = optarg;
+                    }
+                    else
+                    {
+                        /* Ten else nigdy nie nastąpi, bo jeśli brak
+                           argumentu po -p to wykonuje się case ':'.*/
+                        param_read_from_file_flag = 1;
+                    }
                     break;
+                
                 case ':':
                     switch (optopt)
                     {
@@ -67,6 +98,7 @@ int main(int argc, char **argv)
                             break;
                     }
                     break;
+                
                 case '?':
                     fprintf(stderr, "wrong option\n");
                     break;
@@ -79,6 +111,8 @@ int main(int argc, char **argv)
         printf(version_text);
     if (help_flag)
         printf(help_text);
+    if (args_flag)
+        printf("args_flag set\n");
     if (param_flag)
         work_with_param(param_value);
     if (param_read_from_file_flag)
