@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "work_with_param.h"
 
 const char version_text[] = "version 1.0\n";
 const char help_text[] = 
@@ -17,12 +18,16 @@ const char help_text[] =
     "                   if no VALUE, then show last number from 'dane.txt'\n"
     "  -v             Show version\n";
 
+char *param_value;
+
 int main(int argc, char **argv)
 {
     int err = 0;
     int c;
     int help_flag = 0;
     int version_flag = 0;
+    int param_flag = 0;
+    param_value = NULL;
 
     if (argc == 1)      // only program name
     {
@@ -40,6 +45,10 @@ int main(int argc, char **argv)
                 case 'v':
                     version_flag = 1;
                     break;
+                case 'p':
+                    param_flag = 1;
+                    param_value = optarg;
+                    break;
                 default:
                     break;
             }
@@ -49,6 +58,8 @@ int main(int argc, char **argv)
         printf(version_text);
     if (help_flag)
         printf(help_text);
+    if (param_flag)
+        work_with_param(param_value);
 
     return 0;
 }
