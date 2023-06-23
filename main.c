@@ -20,13 +20,19 @@ const char help_text[] =
 
 char *param_value;
 
+
+double nr;
+
 int main(int argc, char **argv)
 {
+    int status;
     int err = 0;
     int c;
     int help_flag = 0;
     int version_flag = 0;
+    int param_read_from_file_flag = 0;
     int param_flag = 0;
+    
     param_value = NULL;
 
     if (argc == 1)      // only program name
@@ -35,7 +41,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        while ((c = getopt(argc, argv, "hvp:")) != -1)
+        while ((c = getopt(argc, argv, ":hvp:")) != -1)
         {
             switch (c)
             {
@@ -49,6 +55,20 @@ int main(int argc, char **argv)
                     param_flag = 1;
                     param_value = optarg;
                     break;
+                case ':':
+                    switch (optopt)
+                    {
+                        case 'p':
+                            param_read_from_file_flag = 1;
+                            break;
+                        default:
+                            fprintf(stderr,"option need some argument\n");
+                            break;
+                    }
+                    break;
+                case '?':
+                    fprintf(stderr, "wrong option\n");
+                    break;
                 default:
                     break;
             }
@@ -60,6 +80,18 @@ int main(int argc, char **argv)
         printf(help_text);
     if (param_flag)
         work_with_param(param_value);
+    if (param_read_from_file_flag)
+    {
+        status = param_read_from_file(&nr);
+        if (status == STATUS_OK) 
+            printf("%lf\n", nr);
+        else if (status == EMPTY_FILE) 
+            fprintf(stderr,"empty file\n");
+        else if (status == FILE_NO_EXIST)
+            fprintf(stderr,"file doesn't exist\n");
+        else
+            fprintf(stderr,"error\n");
+    }
 
     return 0;
 }

@@ -3,6 +3,10 @@
 #include <string.h>
 #include <fcntl.h>
 
+#include "work_with_param.h"
+
+const char FILE_NAME[] = "dane.txt";
+
 /*
  * Return '0' if string is not number or '1'if it is number.
  * Function supports float and double, signed and unsigned number.
@@ -35,6 +39,10 @@ int is_str_number(char *str, int str_len)
     return is_number;
 }
 
+
+/*
+ * Save string to end of file.
+ */
 FILE* save_to_file(const char file_name[], char *arg)
 {
     FILE *fp;
@@ -44,6 +52,7 @@ FILE* save_to_file(const char file_name[], char *arg)
     return fp;
 }
 
+
 /*
  * Description is at 'work_with_param.h'
  */ 
@@ -51,7 +60,7 @@ void work_with_param(char *arg)
 {
     int is_number;
     int len = strlen(arg);
-    const char FILE_NAME[] = "dane.txt";
+    
     //printf("len=%i\n",len);
     
     if (is_str_number(arg,len))
@@ -63,4 +72,51 @@ void work_with_param(char *arg)
     }
     else
         printf("%s\n", arg);
+}
+
+
+/*
+ * Read number from file FILE_NAME
+ * Definition on 'work_with_param.h'
+ */
+int param_read_from_file(double *num)
+{
+    char str_nr[100];
+    FILE *fp;
+    double result;
+    char ch;
+    char *ptr;
+    int len = 0;
+
+    fp = fopen(FILE_NAME, "r");
+    if (!fp)
+        return FILE_NO_EXIST;
+    fseek(fp, 0L, SEEK_SET);
+    if ((getc(fp)) == EOF)   // Looking for end of file
+        return EMPTY_FILE;
+    else
+    {   
+        fseek(fp, 0L, SEEK_END);
+        fseek(fp, -2L, SEEK_CUR);
+        
+        while (getc(fp) != ' ')
+        {
+            len++;
+            fseek(fp, -2L, SEEK_CUR);
+        }
+        
+        for (int i=0; i < len; i++)
+        {
+            str_nr[i] = getc(fp);
+        }
+        str_nr[len] = '\0';
+        //printf ("%s\n", str_nr);
+        
+        result = strtod(str_nr, &ptr);
+        //printf("String part is: %s\n", ptr);
+    }
+    fclose(fp);
+    
+    *num = result; 
+    return STATUS_OK;
 }
