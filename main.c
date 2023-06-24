@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include "work_with_param.h"
+#include "data.h"
+
+#define CASE_DATA   1000
 
 const char version_text[] = "version 1.0\n";
 const char help_text[] = 
@@ -20,6 +23,7 @@ const char help_text[] =
     "  -v             Show version\n";
 
 char *param_value;
+char *data_arg_value;
 
 
 double nr;
@@ -47,10 +51,10 @@ int main(int argc, char **argv)
         while(1)
         {
             static struct option getopt_long_options[] = {
-            {"args",    required_argument,  &args_flag,      1  },
-            {"data",    required_argument,  &data_flag,      1  },
-            {"help",    no_argument,        NULL,           'h' },
-            {"param",   required_argument,  NULL,           'p' },
+            {"args",    required_argument,  &args_flag,     1           },
+            {"data",    required_argument,  NULL,           CASE_DATA   },
+            {"help",    no_argument,        NULL,           'h'         },
+            {"param",   required_argument,  NULL,           'p'         },
             {0, 0, 0, 0}
         };
 
@@ -82,8 +86,20 @@ int main(int argc, char **argv)
                     else
                     {
                         /* Ten else nigdy nie nastąpi, bo jeśli brak
-                           argumentu po -p to wykonuje się case ':'.*/
+                           argumentu po -p to wykonuje się case ':'.   */
                         param_read_from_file_flag = 1;
+                    }
+                    break;
+                case CASE_DATA:
+                    if (optarg)
+                    {
+                        data_flag = 1;
+                        data_arg_value = optarg;
+                    }
+                    else
+                    {
+                        /* Ten else nigdy nie nastąpi, bo jeśli brak
+                           argumentu po --data to wykonuje się case ':'. */
                     }
                     break;
                 
@@ -93,8 +109,11 @@ int main(int argc, char **argv)
                         case 'p':
                             param_read_from_file_flag = 1;
                             break;
+                        case CASE_DATA:
+                            fprintf(stderr,"option --data needs an argument\n");
+                            break;
                         default:
-                            fprintf(stderr,"option need some argument\n");
+                            fprintf(stderr,"option need an argument\n");
                             break;
                     }
                     break;
@@ -113,6 +132,8 @@ int main(int argc, char **argv)
         printf(help_text);
     if (args_flag)
         printf("args_flag set\n");
+    if (data_flag)
+        data(data_arg_value);
     if (param_flag)
         work_with_param(param_value);
     if (param_read_from_file_flag)
