@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <string.h>
 #include "work_with_param.h"
 #include "data.h"
 
@@ -39,6 +40,7 @@ int main(int argc, char **argv)
     int param_flag = 0;
     static int args_flag = 0;
     static int data_flag = 0;
+    char *buff;                         // buffor for copy of argv
     
     param_value = NULL;
 
@@ -51,7 +53,7 @@ int main(int argc, char **argv)
         while(1)
         {
             static struct option getopt_long_options[] = {
-            {"args",    required_argument,  &args_flag,     1           },
+            {"args",    optional_argument,  &args_flag,     1           },
             {"data",    required_argument,  NULL,           CASE_DATA   },
             {"help",    no_argument,        NULL,           'h'         },
             {"param",   required_argument,  NULL,           'p'         },
@@ -113,7 +115,7 @@ int main(int argc, char **argv)
                             fprintf(stderr,"option --data needs an argument\n");
                             break;
                         default:
-                            fprintf(stderr,"option need an argument\n");
+                            fprintf(stderr,"it is wrong option\n");
                             break;
                     }
                     break;
@@ -130,8 +132,6 @@ int main(int argc, char **argv)
         printf(version_text);
     if (help_flag)
         printf(help_text);
-    if (args_flag)
-        printf("args_flag set\n");
     if (data_flag)
         data(data_arg_value);
     if (param_flag)
@@ -147,6 +147,15 @@ int main(int argc, char **argv)
             fprintf(stderr,"file doesn't exist\n");
         else
             fprintf(stderr,"error\n");
+    }
+    if (args_flag)
+    {
+        printf("------------------------\n");
+        printf("Number of arguments: %d\n", argc-1);
+        printf("List of all arguments:\n");
+        for (int i=1; i < argc; i++)
+            printf("%s\n", *++argv);
+        printf("------------------------\n");
     }
 
     return 0;
