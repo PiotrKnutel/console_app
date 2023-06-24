@@ -1,4 +1,5 @@
 # Makefile for project "console_app"
+# Output program name: app
 
 CC		= gcc
 CFLAGS	= -I.

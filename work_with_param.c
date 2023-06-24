@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
-
 #include "work_with_param.h"
 
 const char FILE_NAME[] = "dane.txt";
 
 /*
- * Return '0' if string is not number or '1'if it is number.
+ * Return '0' if string isn't number or '1' if it is number.
  * Function supports float and double, signed and unsigned number.
  */
 int is_str_number(char *str, int str_len)
@@ -61,8 +60,6 @@ void work_with_param(char *arg)
     int is_number;
     int len = strlen(arg);
     
-    //printf("len=%i\n",len);
-    
     if (is_str_number(arg,len))
     {
         if (save_to_file(FILE_NAME, arg))
@@ -89,9 +86,12 @@ int param_read_from_file(double *num)
     int len = 0;
 
     fp = fopen(FILE_NAME, "r");
+
     if (!fp)
         return FILE_NO_EXIST;
+
     fseek(fp, 0L, SEEK_SET);
+
     if ((getc(fp)) == EOF)   // Looking for end of file
         return EMPTY_FILE;
     else
@@ -106,14 +106,10 @@ int param_read_from_file(double *num)
         }
         
         for (int i=0; i < len; i++)
-        {
             str_nr[i] = getc(fp);
-        }
+            
         str_nr[len] = '\0';
-        //printf ("%s\n", str_nr);
-        
         result = strtod(str_nr, &ptr);
-        //printf("String part is: %s\n", ptr);
     }
     fclose(fp);
     

@@ -1,3 +1,7 @@
+/* Simply Linux console program 
+ * author: Piotr Knutel (piknut[at]linux.pl)
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -25,14 +29,11 @@ const char help_text[] =
 
 char *param_value;
 char *data_arg_value;
-
-
 double nr;
 
 int main(int argc, char **argv)
 {
     int status;
-    int err = 0;
     int c;
     int help_flag = 0;
     int version_flag = 0;
@@ -41,13 +42,11 @@ int main(int argc, char **argv)
     static int args_flag = 0;
     static int data_flag = 0;
     char *buff;                         // buffor for copy of argv
-    
+
     param_value = NULL;
 
-    if (argc == 1)      // only program name
-    {
+    if (argc == 1)      // show only program name
         help_flag = 1;
-    }
     else
     {
         while(1)
@@ -58,7 +57,7 @@ int main(int argc, char **argv)
             {"help",    no_argument,        NULL,           'h'         },
             {"param",   required_argument,  NULL,           'p'         },
             {0, 0, 0, 0}
-        };
+            };
 
         int option_index = 0;
         c = getopt_long(argc, argv, ":hvp:", getopt_long_options, &option_index);
@@ -69,7 +68,7 @@ int main(int argc, char **argv)
             switch (c)
             {
                 case 0:
-                    // neccessery for --args and --data
+                    // neccessery for --args
                     if (getopt_long_options[option_index].flag != NULL)
                         break;
                     break;
@@ -102,9 +101,9 @@ int main(int argc, char **argv)
                     {
                         /* Ten else nigdy nie nastąpi, bo jeśli brak
                            argumentu po --data to wykonuje się case ':'. */
+                        fprintf(stderr,"option --data needs an argument\n");
                     }
                     break;
-                
                 case ':':
                     switch (optopt)
                     {
@@ -119,7 +118,6 @@ int main(int argc, char **argv)
                             break;
                     }
                     break;
-                
                 case '?':
                     fprintf(stderr, "wrong option\n");
                     break;
@@ -130,12 +128,16 @@ int main(int argc, char **argv)
     }
     if (version_flag)
         printf(version_text);
+
     if (help_flag)
         printf(help_text);
+
     if (data_flag)
         data(data_arg_value);
+
     if (param_flag)
         work_with_param(param_value);
+
     if (param_read_from_file_flag)
     {
         status = param_read_from_file(&nr);
@@ -148,6 +150,7 @@ int main(int argc, char **argv)
         else
             fprintf(stderr,"error\n");
     }
+
     if (args_flag)
     {
         printf("------------------------\n");
