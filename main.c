@@ -147,6 +147,8 @@ int main(int argc, char **argv)
             fprintf(stderr,"empty file\n");
         else if (status == FILE_NO_EXIST)
             fprintf(stderr,"file doesn't exist\n");
+        else if (status == NO_DETECTED_NUM)
+            fprintf(stderr,"Not detected a number\n");
         else
             fprintf(stderr,"error\n");
     }
