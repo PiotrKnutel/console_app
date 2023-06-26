@@ -74,16 +74,19 @@ void work_with_param(char *arg)
 
 /*
  * Read number from file FILE_NAME
- * Definition on 'work_with_param.h'
+ * Definition in 'work_with_param.h'
  */
 int param_read_from_file(double *num)
 {
+    int status = STATUS_OK;
     char str_nr[100];
     FILE *fp;
     double result;
     char ch;
     char *ptr;
-    int len = 0;
+    int len = 0;                        // number of char in some number's string
+    int num_detection_flag = 0;         // Has the program detected any number in the file, going backward?
+    long int index_of_last_char_in_last_number = 0;
 
     fp = fopen(FILE_NAME, "r");
 
@@ -92,27 +95,50 @@ int param_read_from_file(double *num)
 
     fseek(fp, 0L, SEEK_SET);
 
-    if ((getc(fp)) == EOF)   // Looking for end of file
-        return EMPTY_FILE;
+    if ((getc(fp)) == EOF)                  // Is it a empty file? 
+        status = EMPTY_FILE;
     else
     {   
-        fseek(fp, 0L, SEEK_END);
-        fseek(fp, -2L, SEEK_CUR);
+        fseek(fp, 0L, SEEK_END);            // go to end of file (EOF)
         
-        while (getc(fp) != ' ')
+        do 
         {
-            len++;
-            fseek(fp, -2L, SEEK_CUR);
-        }
+            fseek(fp, -1L, SEEK_CUR);       // go to previous char
+            ch = getc(fp);                  // get a char
+            fseek(fp, -1L, SEEK_CUR);       // pointer to current char 
+            if ((ch>='0' && ch<='9') || ch=='.' || ch=='-')     // check, char can be a part of number
+            {
+                len++;
+                if (num_detection_flag == 0)
+                {
+                    num_detection_flag = 1;
+                    index_of_last_char_in_last_number = ftell(fp);
+                }
+            }
+            else
+            {
+                if (num_detection_flag == 1)    // detected a char before the first number's char
+                    break;
+            }
+        } while (ftell(fp) != 0L);              // while current char isn't the start of file
+
+        if(ftell(fp) != 0L)                      // if this isn't start of file
+            fseek(fp, 1L, SEEK_CUR);            // go to the fist char in number's string
         
-        for (int i=0; i < len; i++)
-            str_nr[i] = getc(fp);
+        if (len == 0)                           // program hasn't detected any number in the file 
+            status = NO_DETECTED_NUM;
+        else                                    // copy number string to result
+        {
+            for (int i=0; i < len; i++)
+                str_nr[i] = getc(fp);
             
-        str_nr[len] = '\0';
-        result = strtod(str_nr, &ptr);
+            str_nr[len+1] = '\0';
+            result = strtod(str_nr, &ptr);
+        }
     }
+    fseek(fp, 0L, SEEK_SET);
     fclose(fp);
     
     *num = result; 
-    return STATUS_OK;
+    return status;
 }

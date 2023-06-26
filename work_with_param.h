@@ -4,6 +4,7 @@
 #define STATUS_OK       0
 #define EMPTY_FILE      -1
 #define FILE_NO_EXIST   -2
+#define NO_DETECTED_NUM -3
 
 
 /*
